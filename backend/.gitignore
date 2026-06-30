@@ -1,0 +1,10 @@
+# Ignore Environment variables
+.env
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore uploaded files but keep the folder
+uploads/*
+!uploads/.gitkeep

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CareerPilot AI</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </head>
+  <body>
+    <div id="authView" class="auth-layout">
+      <section class="auth-visual">
+        <canvas id="hero3d" aria-label="CareerPilot AI 3D skill graph"></canvas>
+        <div class="hero-copy">
+          <p class="eyebrow">CareerPilot AI</p>
+          <h1>Smarter resume intelligence for every job role.</h1>
+          <p>Connect your resume with live role skills, ATS signals, and AI-powered career recommendations.</p>
+        </div>
+      </section>
+
+      <section class="auth-panel">
+        <div class="brand-row">
+          <span class="brand-mark">CP</span>
+          <div>
+            <strong>CareerPilot AI</strong>
+            <small>Resume analysis workspace</small>
+          </div>
+        </div>
+
+        <div class="auth-tabs" role="tablist">
+          <button id="showLogin" class="tab active" type="button">Login</button>
+          <button id="showRegister" class="tab" type="button">Register</button>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+          <label>Email</label>
+          <input id="loginEmail" type="email" autocomplete="email" required />
+          <label>Password</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" required />
+          <button class="primary-btn" type="submit">Login</button>
+        </form>
+
+        <form id="registerForm" class="auth-form hidden">
+          <label>Full name</label>
+          <input id="registerName" type="text" autocomplete="name" required />
+          <label>Email</label>
+          <input id="registerEmail" type="email" autocomplete="email" required />
+          <label>Password</label>
+          <input id="registerPassword" type="password" autocomplete="new-password" minlength="6" required />
+          <button class="primary-btn" type="submit">Create Account</button>
+        </form>
+
+        <div class="divider"><span>or</span></div>
+        <div id="googleButton" class="google-slot"></div>
+        <p id="authStatus" class="status"></p>
+      </section>
+    </div>
+
+    <div id="appView" class="app-layout hidden">
+      <aside class="sidebar">
+        <div class="brand-row">
+          <span class="brand-mark">CP</span>
+          <div>
+            <strong>CareerPilot</strong>
+            <small id="userEmail">Signed in</small>
+          </div>
+        </div>
+        <nav class="nav-menu">
+          <a href="#dashboard" class="nav-link active">Dashboard</a>
+          <a href="#resume" class="nav-link">Resume</a>
+          <a href="#roles" class="nav-link">Roles</a>
+          <a href="#insights" class="nav-link">Insights</a>
+          <a href="/docs" target="_blank" rel="noreferrer" class="nav-link">API Docs</a>
+        </nav>
+        <button id="logoutButton" class="ghost-btn" type="button">Logout</button>
+      </aside>
+
+      <main class="main-content">
+        <section id="dashboard" class="topbar">
+          <div>
+            <p class="eyebrow">Dashboard</p>
+            <h2>AI resume command center</h2>
+          </div>
+          <div class="quick-stats">
+            <article>
+              <span>Match</span>
+              <strong id="miniMatch">--</strong>
+            </article>
+            <article>
+              <span>ATS</span>
+              <strong id="miniAts">--</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="control-grid">
+          <form id="uploadForm" class="glass-card action-card">
+            <div class="card-head">
+              <span class="icon-pill">01</span>
+              <div>
+                <h3>Resume Upload</h3>
+                <p>PDF and DOCX parser connected to the backend.</p>
+              </div>
+            </div>
+            <label class="file-drop" for="resumeFile">
+              <input id="resumeFile" name="file" type="file" accept=".pdf,.docx" required />
+              <span id="fileName">Choose resume file</span>
+            </label>
+            <button id="uploadButton" class="primary-btn" type="submit">Upload Resume</button>
+            <p id="uploadStatus" class="status"></p>
+          </form>
+
+          <form id="analyzeForm" class="glass-card action-card">
+            <div class="card-head">
+              <span class="icon-pill">02</span>
+              <div>
+                <h3>Role Match</h3>
+                <p>Live job roles are fetched from Neon database.</p>
+              </div>
+            </div>
+            <label class="field-label" for="roleSearch">Search job role</label>
+            <div class="combo">
+              <input id="roleSearch" type="text" placeholder="Search role..." autocomplete="off" required />
+              <div id="roleOptions" class="combo-list hidden"></div>
+            </div>
+            <button id="analyzeButton" class="primary-btn" type="submit">Analyze Resume</button>
+            <p id="analyzeStatus" class="status"></p>
+          </form>
+        </section>
+
+        <section id="roles" class="glass-card roles-strip">
+          <div>
+            <h3>Database roles</h3>
+            <p id="roleCount">Loading roles from Neon...</p>
+          </div>
+          <div id="rolePills" class="pill-row"></div>
+        </section>
+
+        <section id="insights" class="results-shell hidden">
+          <div class="score-grid">
+            <article class="score-orbit">
+              <span>Match Score</span>
+              <strong id="matchScore">0</strong>
+              <div class="score-ring"><i id="matchRing"></i></div>
+            </article>
+            <article class="score-orbit">
+              <span>ATS Score</span>
+              <strong id="atsScore">0</strong>
+              <div class="score-ring"><i id="atsRing"></i></div>
+            </article>
+          </div>
+
+          <div class="insight-grid">
+            <article class="smart-card">
+              <h3>Current Skills</h3>
+              <div id="currentSkills" class="chips"></div>
+            </article>
+            <article class="smart-card danger-card">
+              <h3>Missing Skills</h3>
+              <div id="missingSkills" class="chips danger"></div>
+            </article>
+            <article class="smart-card">
+              <h3>Recommended Projects</h3>
+              <ul id="projects"></ul>
+            </article>
+            <article class="smart-card">
+              <h3>Certifications</h3>
+              <ul id="certifications"></ul>
+            </article>
+            <article class="smart-card">
+              <h3>Resume Improvements</h3>
+              <ul id="resumeTips"></ul>
+            </article>
+            <article class="smart-card">
+              <h3>ATS Improvements</h3>
+              <ul id="atsTips"></ul>
+            </article>
+          </div>
+
+          <article class="advice-card">
+            <h3>Career Guidance</h3>
+            <p id="careerAdvice"></p>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>
